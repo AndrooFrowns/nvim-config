@@ -27,6 +27,7 @@ return {
 			-- Open yazi at the nearest project root
 			"<leader>pr",
 			mode = { "n", "v" },
+			-- TODO: find a more robust way to find project roots. As is this breaks.
 			function()
 				-- Function to find the project root
 				local function find_project_root()
