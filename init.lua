@@ -369,7 +369,6 @@ require("lazy").setup({
 		event = "VimEnter",
 		dependencies = {
 			"nvim-lua/plenary.nvim",
-			"debugloop/telescope-undo.nvim",
 			{ -- If encountering errors, see telescope-fzf-native README for installation instructions
 				"nvim-telescope/telescope-fzf-native.nvim",
 
@@ -424,14 +423,12 @@ require("lazy").setup({
 					["ui-select"] = {
 						require("telescope.themes").get_dropdown(),
 					},
-					undo = {},
 				},
 			})
 
 			-- Enable Telescope extensions if they are installed
 			pcall(require("telescope").load_extension, "fzf")
 			pcall(require("telescope").load_extension, "ui-select")
-			pcall(require("telescope").load_extension, "undo")
 
 			-- See `:help telescope.builtin`
 			local builtin = require("telescope.builtin")
