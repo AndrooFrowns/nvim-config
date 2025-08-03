@@ -350,6 +350,8 @@ require("lazy").setup({
 			-- Document existing key chains
 			spec = {
 				{ "<leader>s", group = "[S]earch" },
+				{ "<leader>b", group = "[B]ookmark" },
+				{ "<leader>d", group = "[D]ebugging" },
 				{ "<leader>t", group = "[T]oggle" },
 				{ "<leader>h", group = "Git [H]unk", mode = { "n", "v" } },
 				{ "<leader>p", group = "[P]roject", mode = { "n", "v" } },
@@ -886,7 +888,7 @@ require("lazy").setup({
 			-- the rust implementation via `'prefer_rust_with_warning'`
 			--
 			-- See :h blink-cmp-config-fuzzy for more information
-			fuzzy = { implementation = "lua" },
+			fuzzy = { implementation = "prefer_rust_with_warning" },
 
 			-- Shows a signature help window while you type arguments for a function
 			signature = { enabled = true },
@@ -1014,9 +1016,9 @@ require("lazy").setup({
 	require("kickstart.plugins.debug"),
 	-- require 'kickstart.plugins.indent_line',
 	require("kickstart.plugins.lint"),
-	-- require 'kickstart.plugins.autopairs',
+	require("kickstart.plugins.autopairs"),
 	-- require 'kickstart.plugins.neo-tree',
-	-- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
+	require("kickstart.plugins.gitsigns"), -- adds gitsigns recommend keymaps
 
 	-- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
 	--    This is the easiest way to modularize your config.
