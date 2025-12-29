@@ -584,6 +584,16 @@ require("lazy").setup({
 					--  the definition of its *type*, not where it was *defined*.
 					map("grt", require("telescope.builtin").lsp_type_definitions, "[G]oto [T]ype Definition")
 
+                    -- Call Hierarchy (Essential for debugging contention/coupling)
+                    map("<leader>ci", vim.lsp.buf.incoming_calls, "Incoming Calls")
+                    map("<leader>co", vim.lsp.buf.outgoing_calls, "Outgoing Calls")
+
+                    -- Refactoring (Structural changes)
+                    vim.keymap.set("x", "<leader>re", ":Refactor extract ", { buffer = event.buf, desc = "Extract Function" })
+                    vim.keymap.set("x", "<leader>rf", ":Refactor extract_to_file ", { buffer = event.buf, desc = "Extract to File" })
+                    vim.keymap.set("x", "<leader>rv", ":Refactor extract_var ", { buffer = event.buf, desc = "Extract Variable" })
+                    vim.keymap.set("n", "<leader>ri", ":Refactor inline_var ", { buffer = event.buf, desc = "Inline Variable" })
+
 					-- This function resolves a difference between neovim nightly (version 0.11) and stable (version 0.10)
 					---@param client vim.lsp.Client
 					---@param method vim.lsp.protocol.Method
@@ -711,6 +721,25 @@ require("lazy").setup({
                 bashls = {},
                 dockerls = {},
                 cmake = {},
+                clangd = {
+                    capabilities = {
+                        offsetEncoding = { "utf-16" },
+                    },
+                    cmd = {
+                        "clangd",
+                        "--background-index",
+                        "--clang-tidy",
+                        "--header-insertion=iwyu",
+                        "--completion-style=detailed",
+                        "--function-arg-placeholders",
+                        "--fallback-style=llvm",
+                    },
+                    init_options = {
+                        usePlaceholders = true,
+                        completeUnimported = true,
+                        clangdFileStatus = true,
+                    },
+                },
                 --
 
 				lua_ls = {
@@ -941,6 +970,22 @@ require("lazy").setup({
 		dependencies = { "nvim-lua/plenary.nvim" },
 		opts = { signs = false },
 	},
+
+    { -- Sticky headers for code context
+        "nvim-treesitter/nvim-treesitter-context",
+        opts = { mode = "cursor", max_lines = 3 },
+    },
+
+    { -- Structural refactoring
+        "ThePrimeagen/refactoring.nvim",
+        dependencies = {
+            "nvim-lua/plenary.nvim",
+            "nvim-treesitter/nvim-treesitter",
+        },
+        config = function()
+            require("refactoring").setup()
+        end,
+    },
 
 	{ -- Collection of various small independent plugins/modules
 		"echasnovski/mini.nvim",

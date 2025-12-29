@@ -27,8 +27,8 @@ This is a customized Neovim configuration based on [Kickstart.nvim](https://gith
     *   [Snipe](https://github.com/leath-dub/snipe.nvim) (Fast Buffer Jumping).
     *   [Spelunk](https://github.com/EvWilson/spelunk.nvim) (Mark Stack).
 *   **Session Management:** [Persistence](https://github.com/folke/persistence.nvim) (Auto-save/restore sessions).
-*   **Editor:** [Treesitter](https://github.com/nvim-treesitter/nvim-treesitter), [Auto-pairs](https://github.com/windwp/nvim-autopairs), [Indent Blankline](https://github.com/lukas-reineke/indent-blankline.nvim).
-*   **IDE Features:** LSP (Language Server Protocol), [Blink.cmp](https://github.com/Saghen/blink.cmp) (Completion), [Conform](https://github.com/stevearc/conform.nvim) (Formatting), [nvim-lint](https://github.com/mfussenegger/nvim-lint) (Linting).
+*   **Editor:** [Treesitter](https://github.com/nvim-treesitter/nvim-treesitter), [Auto-pairs](https://github.com/windwp/nvim-autopairs), [Indent Blankline](https://github.com/lukas-reineke/indent-blankline.nvim), [Context](https://github.com/nvim-treesitter/nvim-treesitter-context) (Sticky headers).
+*   **IDE Features:** LSP, [Blink.cmp](https://github.com/Saghen/blink.cmp) (Completion), [Conform](https://github.com/stevearc/conform.nvim) (Formatting), [nvim-lint](https://github.com/mfussenegger/nvim-lint) (Linting), [Refactoring.nvim](https://github.com/ThePrimeagen/refactoring.nvim).
 *   **Languages:** Support for Lua, C/C++, Rust, Python, Go, JS/TS, HTML/CSS, Bash, Docker, CMake, and more.
 *   **Debugging:** [nvim-dap](https://github.com/mfussenegger/nvim-dap) with UI and adapter support for Go, Python, C++, and Rust.
 
@@ -75,15 +75,17 @@ This is a customized Neovim configuration based on [Kickstart.nvim](https://gith
 *   `<leader>tv`: Toggle **Vertical** Terminal.
 *   `<leader>tH`: Toggle **Horizontal** Terminal.
 
-### LSP (Language Server Protocol)
+### LSP & Refactoring
 *   `grd`: Go to **Definition**.
 *   `grr`: Go to **References**.
 *   `gri`: Go to **Implementation**.
-*   `grt`: Go to **Type Definition**.
 *   `grn`: **Rename** symbol.
 *   `gra`: **Code Action**.
-*   `gO`: Open **Document Symbols** (Outline).
-*   `<leader>th`: Toggle **Inlay Hints**.
+*   `<leader>ci`: **Incoming Calls** (Who calls this?).
+*   `<leader>co`: **Outgoing Calls** (What does this call?).
+*   `<leader>re` (Visual): **Extract Function**.
+*   `<leader>rv` (Visual): **Extract Variable**.
+*   `<leader>ri` (Normal): **Inline Variable**.
 *   `<leader>f`: **Format** Buffer.
 
 ### Debugging (DAP)
@@ -95,58 +97,32 @@ This is a customized Neovim configuration based on [Kickstart.nvim](https://gith
 *   `<leader>dT`: Set **Conditional Breakpoint**.
 *   `<F7>`: Toggle **Debugger UI**.
 
-*(Tip: Press `<Space>` and wait a second to see a menu of all available `<leader>` keymaps via `which-key`.)*
-
-## Structure
-
-*   `init.lua`: Core configuration and plugin list.
-*   `lua/kickstart/`: Modularized configurations for specific tools (LSP, Debug, etc.).
-*   `lua/custom/plugins/`: Your added plugin configurations.
-
-## Requirements
-
-*   Neovim >= 0.10.0
-*   Nerd Font (required for icons).
-*   Rippergrep (`rg`) for Telescope grep.
-*   Git and C compiler (for Treesitter).
-
 ## Workflow Guide & Tips
 
 To get the most out of this configuration, try to adapt your workflow to these patterns:
 
-### 1. Movement: Stop holding `hjkl`
-*   **Short distances:** Use standard `w`, `b`, `f`, `t`.
-*   **Medium/Long distances (On Screen):** Press `s` (**Flash**). You'll see labels on every word. Type the label character to jump instantly. It's faster than mouse or repeated `j`/`k`.
-*   **Between buffers:** Instead of cycling with `Shift-h/l`, try `gb` (**Snipe**). It uses valid home-row keys to jump directly to the buffer you want.
+### 1. Hardcore C++ Debugging (Mutex/OOM/UB)
+*   **Static Analysis:** `clang-tidy` is enabled by default. If you see warnings about "concurrency" or "bugprone", fix them immediately. They often point to UB or race conditions.
+*   **Finding Contention:** Put your cursor on a mutex or shared variable and press `<leader>ci` (Incoming Calls). This shows you every function that touches that mutex, making it easy to map out the lock order and find deadlocks.
+*   **Out of Memory:** Use the Debugger (`<F5>`). While debugging, use the DAP UI (`<F7>`) to inspect variables and memory state.
+*   **Refactoring for Decoupling:** Use Visual Mode to select a chunk of code and press `<leader>re` to extract it to a function. This is the first step in breaking up "God Classes" and tightly coupled logic.
 
-### 2. Navigation: Fuzzy Find First
-*   **Opening Files:** Habituate yourself to `<space>sf` (Search Files). It's faster than browsing the tree.
-*   **Searching Code:** Use `<space>sg` (Grep) to find text across the whole project.
-*   **Overview:** Use `<space>a` (**Aerial**) to see the "Table of Contents" of your code (functions, classes) and jump around.
+### 2. Movement & Navigation
+*   **Medium/Long distances (On Screen):** Press `s` (**Flash**). You'll see labels on every word. Type the label character to jump instantly.
+*   **Between buffers:** Try `gb` (**Snipe**) to jump directly to any open buffer.
+*   **Sticky Context:** Look at the top of your screen as you scroll—the current function/class header will "stick" there so you always know where you are.
 
-### 3. Diagnostics & Fixing
-*   **Don't hunt for errors:** If you see red, press `<space>xx` (**Trouble**). It gives you a nice list of every error in the project.
-*   **Fixing things:**
-    *   Cursor on error -> `gra` (Code Action) to see quick fixes.
-    *   Cursor on variable -> `grn` (Rename) to rename it safely across all files.
-*   **C++ Tip:** If you see "too many errors emitted", it means `clangd` doesn't know how to compile your project. Run `cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON .` in your build folder to generate a `compile_commands.json` file.
+### 3. Build & Diagnostics
+*   **C++ Fix:** If you see "too many errors emitted", it means `clangd` doesn't know how to compile your project. Run `cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON .` in your build folder to generate a `compile_commands.json` file.
+*   **Trouble:** Press `<space>xx` to see a project-wide list of errors. Much better than scrolling and looking for red squiggles.
 
-### 4. Terminal Management
-*   **Don't alt-tab:** Need to run a quick command or build? Press `<C-t>`. It pops up a floating terminal. Do your thing, press `<C-t>` again to hide it. It stays running in the background.
-
-### 5. Session Flow
-*   **Resume where you left off:** When you open Neovim in a project folder, press `<space>qs` to restore your windows and files exactly as they were last time.
-
-### 6. Dev Container Usage
+### 4. Dev Container Usage
 If you work in a Docker/Dev Container environment, run Neovim **inside** the container to ensure the LSP can find all dependencies and headers.
-*   **Map your config:** Add a bind mount to your `devcontainer.json` so you can use your host's Neovim configuration inside the container:
+*   **Map your config:** Add a bind mount to your `devcontainer.json`:
     ```json
-    "mounts": [
-      "source=${localEnv:HOME}/.config/nvim,target=/root/.config/nvim,type=bind"
-    ]
+    "source"="${localEnv:HOME}/.config/nvim,target=/root/.config/nvim,type=bind"
     ```
-    *(Adjust `target` if your container user is not root, e.g., `/home/vscode/.config/nvim`)*.
-*   **Run it:** Use the `devcontainer` CLI to execute Neovim:
-    ```bash
-    devcontainer exec --workspace-folder . nvim .
-    ```
+*   **Run it:** Use `devcontainer exec --workspace-folder . nvim .`
+
+### 5. Terminal Management
+*   **Don't alt-tab:** Press `<C-t>` to pop up a floating terminal. Do your thing, press `<C-t>` again to hide it. It stays running in the background.
