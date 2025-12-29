@@ -349,12 +349,16 @@ require("lazy").setup({
 
 			-- Document existing key chains
 			spec = {
-				{ "<leader>s", group = "[S]earch" },
-				{ "<leader>b", group = "[B]ookmark" },
-				{ "<leader>d", group = "[D]ebugging" },
-				{ "<leader>t", group = "[T]oggle" },
-				{ "<leader>h", group = "Git [H]unk", mode = { "n", "v" } },
-				{ "<leader>p", group = "[P]roject", mode = { "n", "v" } },
+				{ "<leader>s", group = "[S]earch", icon = " " },
+				{ "<leader>c", group = "[C]ode", icon = " " },
+				{ "<leader>d", group = "[D]iagnostics / [D]ebug", icon = " " },
+				{ "<leader>t", group = "[T]oggle / [T]erminal", icon = " " },
+				{ "<leader>h", group = "Git [H]unk", mode = { "n", "v" }, icon = " " },
+				{ "<leader>p", group = "[P]roject", mode = { "n", "v" }, icon = " " },
+				{ "<leader>q", group = "[Q]uickfix / [S]ession", icon = "󰗼 " },
+				{ "<leader>b", group = "[B]uffer", icon = "󰓩 " },
+                { "<leader>x", group = "Trouble", icon = " " },
+                { "<leader>n", group = "[N]otifications", icon = " " },
 			},
 		},
 	},
@@ -702,6 +706,12 @@ require("lazy").setup({
 				-- But for many setups, the LSP (`ts_ls`) will work just fine
 				ts_ls = {},
 				--
+                html = { filetypes = { 'html', 'twig', 'hbs' } },
+                cssls = {},
+                bashls = {},
+                dockerls = {},
+                cmake = {},
+                --
 
 				lua_ls = {
 					-- cmd = { ... },
@@ -735,6 +745,9 @@ require("lazy").setup({
 			local ensure_installed = vim.tbl_keys(servers or {})
 			vim.list_extend(ensure_installed, {
 				"stylua", -- Used to format Lua code
+                "markdownlint",
+                "isort", "black", "pylint", "eslint_d", "prettierd", "shfmt", "clang-format",
+                "hadolint", "cmakelang",
 			})
 			require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 
@@ -788,10 +801,14 @@ require("lazy").setup({
 			formatters_by_ft = {
 				lua = { "stylua" },
 				-- Conform can also run multiple formatters sequentially
-				-- python = { "isort", "black" },
+				python = { "isort", "black" },
 				--
 				-- You can use 'stop_after_first' to run the first available formatter from the list
-				-- javascript = { "prettierd", "prettier", stop_after_first = true },
+				javascript = { "prettierd", "prettier", stop_after_first = true },
+                typescript = { "prettierd", "prettier", stop_after_first = true },
+                html = { "prettierd", "prettier", stop_after_first = true },
+                css = { "prettierd", "prettier", stop_after_first = true },
+                bash = { "shfmt" },
 			},
 		},
 	},
@@ -946,17 +963,17 @@ require("lazy").setup({
 			-- Simple and easy statusline.
 			--  You could remove this setup call if you don't like it,
 			--  and try some other statusline plugin
-			local statusline = require("mini.statusline")
+			-- local statusline = require("mini.statusline")
 			-- set use_icons to true if you have a Nerd Font
-			statusline.setup({ use_icons = vim.g.have_nerd_font })
+			-- statusline.setup({ use_icons = vim.g.have_nerd_font })
 
 			-- You can configure sections in the statusline by overriding their
 			-- default behavior. For example, here we set the section for
 			-- cursor location to LINE:COLUMN
 			---@diagnostic disable-next-line: duplicate-set-field
-			statusline.section_location = function()
-				return "%2l:%-2v"
-			end
+			-- statusline.section_location = function()
+			-- 	return "%2l:%-2v"
+			-- end
 
 			-- ... and there is more!
 			--  Check out: https://github.com/echasnovski/mini.nvim
@@ -965,7 +982,7 @@ require("lazy").setup({
 	{ -- Highlight, edit, and navigate code
 		"nvim-treesitter/nvim-treesitter",
 		build = ":TSUpdate",
-		main = "nvim-treesitter.configs", -- Sets main module to use for opts
+		main = "nvim-treesitter", -- Sets main module to use for opts
 		-- [[ Configure Treesitter ]] See `:help nvim-treesitter`
 		opts = {
 			ensure_installed = {
@@ -984,6 +1001,11 @@ require("lazy").setup({
 				"go",
 				"javascript",
 				"typescript",
+                "cpp",
+                "python",
+                "css",
+                "dockerfile",
+                "cmake",
 			},
 			-- Autoinstall languages that are not installed
 			auto_install = true,
@@ -1014,10 +1036,10 @@ require("lazy").setup({
 	--  Uncomment any of the lines below to enable them (you will need to restart nvim).
 	--
 	require("kickstart.plugins.debug"),
-	-- require 'kickstart.plugins.indent_line',
+	require("kickstart.plugins.indent_line"),
 	require("kickstart.plugins.lint"),
 	require("kickstart.plugins.autopairs"),
-	-- require 'kickstart.plugins.neo-tree',
+	require("kickstart.plugins.neo-tree"),
 	require("kickstart.plugins.gitsigns"), -- adds gitsigns recommend keymaps
 
 	-- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`

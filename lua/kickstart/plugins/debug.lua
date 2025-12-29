@@ -95,8 +95,57 @@ return {
 			ensure_installed = {
 				-- Update this to ensure that you have the debuggers for the langs you want
 				"delve",
+                "codelldb",
+                "debugpy",
 			},
+            handlers = {
+                function(config)
+                    -- all sources with no handler get passed here
+
+                    -- Keep original functionality
+                    require('mason-nvim-dap').default_setup(config)
+                end,
+                python = function(config)
+                    config.adapters = {
+                        type = "executable",
+                        command = "/usr/bin/python3",
+                        args = {
+                            "-m",
+                            "debugpy.adapter",
+                        },
+                    }
+                    require('mason-nvim-dap').default_setup(config) -- don't forget this!
+                end,
+            },
 		})
+
+        -- Basic debugging configuration for C++, Rust, and Python
+        dap.configurations.cpp = {
+            {
+                name = "Launch file",
+                type = "codelldb",
+                request = "launch",
+                program = function()
+                    return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+                end,
+                cwd = '${workspaceFolder}',
+                stopOnEntry = false,
+            },
+        }
+        dap.configurations.c = dap.configurations.cpp
+        dap.configurations.rust = dap.configurations.cpp
+
+        dap.configurations.python = {
+            {
+                type = 'python',
+                request = 'launch',
+                name = "Launch file",
+                program = "${file}",
+                pythonPath = function()
+                    return '/usr/bin/python3'
+                end,
+            },
+        }
 
 		-- Dap UI setup
 		-- For more information, see |:help nvim-dap-ui|
