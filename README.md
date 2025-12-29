@@ -124,5 +124,8 @@ If you work in a Docker/Dev Container environment, run Neovim **inside** the con
     ```
 *   **Run it:** Use `devcontainer exec --workspace-folder . nvim .`
 
-### 5. Terminal Management
-*   **Don't alt-tab:** Press `<C-t>` to pop up a floating terminal. Do your thing, press `<C-t>` again to hide it. It stays running in the background.
+### 4. Terminal vs Command Line
+*   **Command Line (`:`):** Use this for Neovim-specific commands (e.g., `:w` to save, `:q` to quit).
+*   **Terminal (`Ctrl-t`):** Use this for a full bash/shell inside Neovim. It pops up a floating window for your linux commands. Press `Ctrl-t` again to hide it (it stays running in the background!).
+
+### 5. Session Flow
