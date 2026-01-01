@@ -166,6 +166,13 @@ vim.o.cursorline = true
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.o.scrolloff = 8
 
+-- Add filetype detection for templ
+vim.filetype.add({
+	extension = {
+		templ = "templ",
+	},
+})
+
 -- if performing an operation that would fail due to unsaved changes in the buffer (like `:q`),
 -- instead raise a dialog asking if you wish to save the current file(s)
 -- See `:help 'confirm'`
@@ -704,6 +711,7 @@ require("lazy").setup({
 			--  - settings (table): Override the default settings passed when initializing the server.
 			--        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
 			local servers = {
+				templ = {},
 				clangd = {},
 				gopls = {},
 				pyright = {},
@@ -716,7 +724,7 @@ require("lazy").setup({
 				-- But for many setups, the LSP (`ts_ls`) will work just fine
 				ts_ls = {},
 				--
-                html = { filetypes = { 'html', 'twig', 'hbs' } },
+                html = { filetypes = { "html", "twig", "hbs", "templ" } },
                 cssls = {},
                 bashls = {},
                 dockerls = {},
@@ -834,6 +842,7 @@ require("lazy").setup({
 				end
 			end,
 			formatters_by_ft = {
+				templ = { "templ" },
 				lua = { "stylua" },
 				-- Conform can also run multiple formatters sequentially
 				python = { "isort", "black" },
@@ -1037,6 +1046,7 @@ require("lazy").setup({
 		-- [[ Configure Treesitter ]] See `:help nvim-treesitter`
 		opts = {
 			ensure_installed = {
+				"templ",
 				"bash",
 				"c",
 				"diff",
