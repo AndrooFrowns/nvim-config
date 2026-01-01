@@ -777,7 +777,6 @@ require("lazy").setup({
                 "markdownlint",
                 "isort", "black", "pylint", "eslint_d", "prettierd", "shfmt", "clang-format",
                 "hadolint", "cmakelang",
-                "pytest",
 			})
 			require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 
