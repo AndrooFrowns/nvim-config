@@ -9,7 +9,7 @@ return {
       -- Adapters
       "nvim-neotest/neotest-python",
       "rouge8/neotest-rust",
-      "alfa02/neotest-gtest",
+      "alfaix/neotest-gtest",
       "nvim-neotest/neotest-go",
     },
     config = function()
