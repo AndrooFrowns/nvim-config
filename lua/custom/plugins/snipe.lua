@@ -10,6 +10,8 @@ return {
 				desc = "Open Snipe buffer menu",
 			},
 		},
-		opts = {},
+		opts = {
+			sort = "last", -- sort by most recently accessed
+		},
 	},
 }
